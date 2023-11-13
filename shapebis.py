@@ -23,8 +23,14 @@ def sphere2cartesian(R,theta,phi):
 
     return (X,Y,Z)
 
+def cbar_ticklabels_formating(labels: np.ndarray, cbar_ticks_format:str):
+    return [f"{label:{cbar_ticks_format}}" for label in labels]
+
 def min_max_scale(a:np.ndarray):
     return (a-np.min(a))/(np.max(a)-np.min(a))
+
+def scale(a:np.ndarray, min, max):
+    return (a-min)/(max-min)
 
 
 class Shape:
@@ -73,7 +79,7 @@ class SphericalShape(Shape):
 
         super().__init__(points, dS)
 
-    def plot_surface(self, fig:plt.Figure, ax:plt.Axes, title="Spherical plot", xlabel="X", ylabel="Y", zlabel="Z", cmap:colors.Colormap=plt.get_cmap("magma"), colorbar=False, cbar_label="", nb_cbar_ticks=5, cbar_ticks_format="1.2e"):
+    def plot_surface(self, fig:plt.Figure, ax:plt.Axes, title="Spherical plot", title_size=25, xlabel="X", ylabel="Y", zlabel="Z", label_size=15, cmap:colors.Colormap=plt.get_cmap("magma"), colorbar=False, cbar_label="", nb_cbar_ticks=5, ticks_size=12, cbar_ticks_format="1.2e"):
         """
             Plot the radius of the shape over the cartesian plane. The aspect ratio of the plot is 1, which means that all 3 axis have the same scale
             The colormap use the normalized radius as metric.
@@ -99,50 +105,19 @@ class SphericalShape(Shape):
 
         surf = ax.plot_surface(*self.points, cmap="magma", facecolors=colors)
 
-        ax.set_xlabel(xlabel)
-        ax.set_ylabel(ylabel)
-        ax.set_zlabel(zlabel)
+        ax.set_xlabel(xlabel, fontsize=label_size)
+        ax.set_ylabel(ylabel, fontsize=label_size)
+        ax.set_zlabel(zlabel, fontsize=label_size)
 
 
-        ax.set_title(title)
+        ax.set_title(title, fontsize=title_size)
         ax.set_aspect("equal")
 
         if colorbar:
-            def cbar_ticklabels_formating(labels: np.ndarray):
-                return [f"{label:{cbar_ticks_format}}" for label in labels]
-
             cbar_ticks = np.linspace(0,1,nb_cbar_ticks)
-            cbar_ticks_label = cbar_ticklabels_formating(np.linspace(Rmin,Rmax,nb_cbar_ticks))
+            cbar_ticks_label = cbar_ticklabels_formating(np.linspace(Rmin,Rmax,nb_cbar_ticks), cbar_ticks_format)
             cbar = fig.colorbar(surf, location="left")
 
             cbar.ax.set_yticks(cbar_ticks)
-            cbar.ax.set_yticklabels(cbar_ticks_label)
+            cbar.ax.set_yticklabels(cbar_ticks_label, fontsize=ticks_size)
             cbar.ax.set_ylabel(cbar_label)
-    
-#################################################################################################################
-
-
-# class CenteredSphere(Shape):
-#     def __init__(self, R, nSampleTheta, nSamplePhi):
-
-#         self.nTheta=nSampleTheta
-#         self.nPhi=nSamplePhi
-
-#         #Création des points polaires de la sphère
-#         self.theta, dTheta = np.linspace(0, np.pi, nSampleTheta, retstep=True)
-#         self.phi, dPhi = np.linspace(0,2*np.pi, nSamplePhi, endpoint=False, retstep=True)
-        
-#         self.theta=self.theta.reshape(nSampleTheta,1)  
-#         self.phi=self.phi.reshape(nSamplePhi,1)
-
-#         self.Z = np.zeros((3,nSampleTheta,nSamplePhi))
-#         self.Z[0] = R
-#         self.Z[(1,2),:] = np.array(np.meshgrid(self.phi,self.theta)).T.reshape(2,nSampleTheta,nSamplePhi)
-
-#         self.points = sphere2cartesian(self.Z[0],self.theta,self.phi)
-#         self.m = len(self.points)
-
-#         self.J = (lambda r,theta,_: r*r*np.sin(theta)*dTheta*dPhi)
-#         self.dS = self.J(*self.Z)
-
-#         # self.dS = np.power(self.Z[0],2)*np.sin(self.Z[1])*dTheta*dPhi
