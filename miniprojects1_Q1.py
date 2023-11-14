@@ -123,17 +123,21 @@ def plot_uv_plane(fig, ax, X, Y , Z, zmin=0, zmax=1,
     ax.set_ylabel(ylabel, fontsize=label_size)
     ax.set_title(title, fontsize=title_size)
 
+    ticks = np.linspace(np.min(Z), np.max(Z), 10)
+
     cbar = fig.colorbar(surf, location="left")
     cbar.ax.set_ylabel(cbar_label, fontsize=cbar_label_size)
+    cbar.set_ticks(ticks)
     cbar.ax.tick_params("y", labelsize=cbar_ticks_size)
 
-LHCP_D_dB = 10*np.log(LHCP_D_grid)
-RHCP_D_dB = 10*np.log(RHCP_D_grid)
+LHCP_D_dB = 10*np.log10(LHCP_D_grid)
+RHCP_D_dB = 10*np.log10(RHCP_D_grid)
 
 min = min(np.min(LHCP_D_dB), np.min(RHCP_D_dB))
 max = max(np.max(LHCP_D_dB), np.max(RHCP_D_dB))
 
 print(min, max)
+print( np.max(RHCP_D_dB))
 
 fig, axes = plt.subplots(1,2)
 X,Y,_ = sphere2cartesian(1,theta_grid, phi_grid)
