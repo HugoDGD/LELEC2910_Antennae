@@ -12,7 +12,7 @@ sphere_grid = (theta_grid, phi_grid, dTheta, dPhi)
 TE_grid = loadmat("Metasurface patterns/S12_grid_matrix_TE.mat")["S12_grid_matrix_TE"]
 TM_grid = loadmat("Metasurface patterns/S12_grid_matrix_TM.mat")["S12_grid_matrix_TM"]
 
-R = np.abs(TE_grid+TM_grid) #Norm of the radiated field
+R = np.sqrt(np.power(np.abs(TE_grid),2)+np.power(np.abs(TM_grid),2)) #Norm of the radiated field
 
 ########################################################################################################
 #Total directivity
